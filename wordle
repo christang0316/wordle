@@ -1,0 +1,161 @@
+int x, y;
+int i, j;
+int squareSize=54;
+int interval=7;  //interval between squares
+int num=0;  //num=0~4
+int row=0;  //row=0~5
+int initialX;
+int initialY=100;
+boolean draw=false;
+char answer[]={'Z', 'E', 'B', 'R', 'A'};
+char check[]= new char[5];
+
+void setup(){
+  size(400, 500);
+  background(255);
+  fill(0);
+  textSize(64);
+  text("WORDLE", 70, 70);
+  
+  fill(255);
+  stroke(200);
+  strokeWeight(2);
+  
+  initialX=width/2-5*(squareSize/2)-2*interval;
+
+  blankSquare();
+  
+  /*
+  fill(0);
+  textSize(40);
+  text("a", initialX+17, initialY+39);*/
+  
+  //draw letter
+  
+}
+
+void draw(){
+}
+
+
+void keyPressed(){
+  println(key, keyCode);
+  if(key == BACKSPACE && num>0 ){  //don't overflow){
+      //x decrease, erase (cover) check[i]
+      num-=1;
+      println("****************");
+      
+      //draw blank square
+      getLocation();
+      OneBlankSquare();
+  }
+  else if(key == RETURN || key == ENTER){
+    if(num==5){  //word is complete
+      //check all the answer and change the color
+      
+      for(i=0; i<5; i++, draw=false)
+        for(j=0; j<5; j++){
+          num=i;
+          getLocation();
+          
+          println(check[i], answer[j]);
+          if(check[i] == answer[j]){
+
+            draw=true;
+            
+            if(i==j){
+              greenSquare();
+              println("green");
+            }
+              //draw the letter
+            else{
+              println("yellow");
+              yellowSquare();    
+              //draw the letter
+            }
+            continue;
+          }
+          
+          if(j==4 && !draw){
+            println("grey");
+            graySquare();
+          }
+        }
+      
+      //drawLetter
+        fill(255);
+        for(num=0; num<5; num++)
+          drawLetter();
+      
+      //start next row
+      row+=1;
+      num=0;
+    }
+  
+  }
+  else if(('a'<=key && key<='z') || ('A'<=key && key<='Z')){
+    println("****************");
+    if(num<5){  //don't overflow
+      if('a'<=key && key<='z')
+        key-=32;
+      //get and save letter
+      check[num]=key;
+      
+      //draw letter
+      fill(0);
+      drawLetter();
+      
+      //turn to next letter
+      num+=1;
+    }
+  }
+}
+
+
+/************************************************/
+
+void blankSquare(){      
+  for(y=initialY, i=0 ; i<6; y+=squareSize+interval, i++)
+    for(x=initialX,j=0; j<5; x+=squareSize+interval, j++){
+      square(x, y, squareSize);
+    } 
+}
+
+void OneBlankSquare(){
+  fill(255);
+  stroke(200);
+  strokeWeight(2);
+  square(x, y, squareSize);
+}
+
+void greenSquare(){
+  fill(106,170,100,255);
+  stroke(106,170,100,255);
+  strokeWeight(2);
+  square(x, y, squareSize);
+}
+
+void graySquare(){
+  fill(124, 124, 124);
+  stroke(124, 124, 124);
+  strokeWeight(2);
+  square(x, y, squareSize);
+}
+
+void yellowSquare(){
+  fill(#CAB459);
+  stroke(#CAB459);
+  strokeWeight(2);
+  square(x, y, squareSize);
+}
+
+void getLocation(){
+  x=initialX+(squareSize+interval)*num;
+  y=initialY+(squareSize+interval)*row;
+}
+
+void drawLetter(){
+  textSize(40);
+  getLocation();
+  text(check[num], x+15, y+39);
+}
